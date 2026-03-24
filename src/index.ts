@@ -1,6 +1,13 @@
-import { config } from '@/config';
+import * as telegramBot from '@/bots/telegram';
+import config from './config';
 
-if (config.telegram.token !== undefined) {
-  const { telegramBot } = await import('@/bots/telegram');
-  telegramBot.start();
+let bots = 0;
+
+if (config.telegram.token) {
+  telegramBot.create(config.telegram.token).start();
+  bots++;
+}
+
+if (bots < 1) {
+  throw Error('No bot is running');
 }

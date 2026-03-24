@@ -1,4 +1,4 @@
-export const config = {
+const config = {
   telegram: {
     token: Bun.env.TELEGRAM_BOT_TOKEN,
   },
@@ -6,6 +6,8 @@ export const config = {
     token: Bun.env.DISCORD_BOT_TOKEN,
   },
 };
+
+export default config;
 
 // function required(key: string): string {
 // 	const val = Bun.env[key];
