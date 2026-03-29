@@ -1,3 +1,5 @@
+import config from '@/config';
+
 export function logger(sender: string) {
   const base = (status: string, ...data: any[]) =>
     console.log(
@@ -15,6 +17,10 @@ export function logger(sender: string) {
     },
     info(...data: any[]) {
       base('INFO', ...data);
+    },
+    debug(...data: any[]) {
+      if (!config.debug) return;
+      base('DBG ', ...data);
     },
   };
 }

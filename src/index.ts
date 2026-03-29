@@ -1,6 +1,6 @@
 import * as telegramBot from '@/bots/telegram';
-import config from './config';
 import { core as log } from '@/lib/log';
+import config from './config';
 
 let bots = 0;
 

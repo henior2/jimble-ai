@@ -6,6 +6,7 @@ const config = {
   discord: {
     token: Bun.env.DISCORD_BOT_TOKEN,
   },
+  debug: !!Bun.env.DEBUG
 };
 
 export default config;
