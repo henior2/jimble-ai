@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: logger can accept any params */
 import config from '@/config';
 
 export function logger(sender: string) {

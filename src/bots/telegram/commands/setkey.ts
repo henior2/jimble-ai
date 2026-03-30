@@ -6,6 +6,7 @@ import {
 import { Composer, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
 import { telegram as log } from '@/lib/log';
+import { ChatRepo } from '../models/chat';
 import { UserRepo } from '../models/user';
 
 export const commands: BotCommand[] = [
@@ -30,7 +31,7 @@ async function setMyKey(conversation: Conversation, ctx: Context) {
   const { message } = await conversation.waitFor('message:text');
   const key = message.text.trim();
 
-  if (!key) return;
+  if (!key || key.startsWith('/')) return;
 
   conversation.external(() => UserRepo?.patch(message.from.id, { key }));
   await ctx.reply(
@@ -51,9 +52,9 @@ async function setKey(
   const { message } = await conversation.waitFor('message:text');
   const key = message.text.trim();
 
-  if (!key) return;
+  if (!key || key.startsWith('/')) return;
 
-  conversation.external(() => UserRepo?.patch(chatID, { key }));
+  conversation.external(() => ChatRepo?.set(chatID, { key }));
   await ctx.reply(
     `API key has been set. It will now be used in chat <code>${chatID}</code>.`,
     { parse_mode: 'HTML' },
@@ -64,11 +65,17 @@ bot.use(createConversation(setMyKey));
 bot.use(createConversation(setKey));
 
 async function checkIfAdmin(ctx: Context, chatID: number) {
-  if (ctx.chat?.type === 'private') return true;
+  try {
+    const chatType = (await ctx.api.getChat(chatID)).type;
+    if (chatType === 'private') return true;
+  } catch {
+    await ctx.reply('An error occured. Make sure to add the bot to the chat.');
+    return false;
+  }
 
   const admin = await ctx.api.getChatMember(chatID, ctx.from?.id ?? 0);
 
-  if (admin?.status in ['administrator', 'creator']) {
+  if (['administrator', 'creator'].includes(admin?.status)) {
     return true;
   }
 
@@ -86,7 +93,7 @@ bot.command('setkey', async (ctx) => {
     await ctx.reply('Specify valid chat ID: /setkey <chat ID>');
     return;
   }
-  if (!checkIfAdmin(ctx, chatID)) return;
+  if (!(await checkIfAdmin(ctx, chatID))) return;
 
   await ctx.conversation.enter('setKey', chatID);
 });
@@ -102,9 +109,9 @@ bot.command('unsetkey', async (ctx) => {
     await ctx.reply('Specify valid chat ID: /unsetkey <chat ID>');
     return;
   }
-  if (!checkIfAdmin(ctx, chatID)) return;
+  if (!(await checkIfAdmin(ctx, chatID))) return;
 
-  UserRepo?.patch(chatID, { key: '' });
+  ChatRepo?.delete(chatID);
   await ctx.reply('The key has been unset.');
 });
 
