@@ -2,6 +2,7 @@ import {
   type ConversationFlavor,
   conversations,
 } from '@grammyjs/conversations';
+import * as preferences from '@telegram/commands/preferences';
 import * as prompt from '@telegram/commands/prompt';
 import * as setKey from '@telegram/commands/setkey';
 import { Bot, type Context } from 'grammy';
@@ -13,6 +14,7 @@ const commands: BotCommand[] = [
   { command: 'start', description: 'Start the bot' },
 
   ...prompt.commands,
+  ...preferences.commands,
   ...setKey.commands,
 ];
 
@@ -37,6 +39,7 @@ export function create(token: string) {
   });
 
   bot.use(prompt.bot);
+  bot.use(preferences.bot);
   bot.use(setKey.bot);
 
   bot.catch((err) => {
