@@ -2,12 +2,12 @@ import {
   type ConversationFlavor,
   conversations,
 } from '@grammyjs/conversations';
+import * as prompt from '@telegram/commands/prompt';
+import * as setKey from '@telegram/commands/setkey';
 import { Bot, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
 import config from '@/config';
 import { telegram as log } from '@/lib/log';
-import * as prompt from './commands/prompt';
-import * as setKey from './commands/setkey';
 
 const commands: BotCommand[] = [
   { command: 'start', description: 'Start the bot' },

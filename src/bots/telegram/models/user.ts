@@ -1,7 +1,7 @@
+import { telegram } from '@telegram/db';
 import type { Database } from 'lmdb';
 import { createRepo } from '@/lib/repo';
 import type { UserPreferences } from '@/types';
-import { telegram } from '../db';
 
 export type User = {
   key: string;

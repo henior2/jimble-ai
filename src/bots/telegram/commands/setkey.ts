@@ -3,11 +3,11 @@ import {
   type ConversationFlavor,
   createConversation,
 } from '@grammyjs/conversations';
+import { ChatRepo } from '@telegram/models/chat';
+import { UserRepo } from '@telegram/models/user';
 import { Composer, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
 import { telegram as log } from '@/lib/log';
-import { ChatRepo } from '../models/chat';
-import { UserRepo } from '../models/user';
 
 export const commands: BotCommand[] = [
   { command: 'id', description: 'Get current chat ID' },
@@ -33,7 +33,9 @@ async function setMyKey(conversation: Conversation, ctx: Context) {
 
   if (!key || key.startsWith('/')) return;
 
-  conversation.external(() => UserRepo?.patch(message.from.id, { key }));
+  await conversation.external(
+    async () => await UserRepo?.patch(message.from.id, { key }),
+  );
   await ctx.reply(
     'API key has been set. You can now use it in direct chat with bot or in any group.',
   );
@@ -99,7 +101,7 @@ bot.command('setkey', async (ctx) => {
 });
 
 bot.command('unsetmykey', async (ctx) => {
-  UserRepo?.patch(ctx.from?.id ?? 0, { key: '' });
+  await UserRepo?.patch(ctx.from?.id ?? 0, { key: '' });
   await ctx.reply('Your key has been unset.');
 });
 
