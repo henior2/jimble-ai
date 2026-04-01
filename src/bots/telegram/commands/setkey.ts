@@ -3,11 +3,11 @@ import {
   type ConversationFlavor,
   createConversation,
 } from '@grammyjs/conversations';
-import { ChatRepo } from '@telegram/models/chat';
-import { UserRepo } from '@telegram/models/user';
 import { Composer, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
 import { telegram as log } from '@/lib/log';
+import { ChatRepo } from '../models/chat';
+import { UserRepo } from '../models/user';
 
 export const commands: BotCommand[] = [
   { command: 'id', description: 'Get current chat ID' },
