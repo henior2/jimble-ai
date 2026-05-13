@@ -33,8 +33,6 @@ bot.command('search', async (ctx) => {
   UserRepo.set(ctx.from.id, user);
 });
 
-// TODO implement set preferred model command
-
 async function setPreferred(
   conversation: Conversation,
   ctx: Context,

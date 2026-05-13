@@ -1,31 +1,27 @@
 import type { Database, Key } from 'lmdb';
 
-export type Repo<V, K extends Key> = {
-  get: (id: K) => V;
-  set: (id: K, value: V) => Promise<void>;
-  patch: (id: K, patch: Partial<V>) => Promise<void>;
-  delete: (id: K) => Promise<void>;
-};
+export class Repo<V, K extends Key> {
+  database: Database<V, K>;
+  defaults: V;
 
-export function createRepo<V, K extends Key>(
-  database: Database<V, K>,
-  defaults: V,
-): Repo<V, K> {
-  return {
-    get(id: K) {
-      return database.get(id) ?? defaults;
-    },
+  constructor(database: Database<V, K>, defaults: V) {
+    this.database = database;
+    this.defaults = defaults;
+  }
 
-    async set(id: K, value: V) {
-      await database.put(id, value);
-    },
+  get(id: K) {
+    return this.database.get(id) ?? this.defaults;
+  }
 
-    async patch(id: K, patch: Partial<V>) {
-      await database.put(id, { ...this.get(id), ...patch });
-    },
+  async set(id: K, value: V) {
+    await this.database.put(id, value);
+  }
 
-    async delete(id: K) {
-      await database.remove(id);
-    },
-  };
+  async patch(id: K, patch: Partial<V>) {
+    await this.database.put(id, { ...this.get(id), ...patch });
+  }
+
+  async delete(id: K) {
+    await this.database.remove(id);
+  }
 }

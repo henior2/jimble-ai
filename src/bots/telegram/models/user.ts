@@ -1,5 +1,5 @@
 import type { Database } from 'lmdb';
-import { createRepo } from '@/lib/repo';
+import { Repo } from '@/lib/repo';
 import type { UserPreferences } from '@/types';
 import { telegram } from '../db';
 
@@ -15,4 +15,4 @@ const defaults = {
 
 const db: Database<User, number> | undefined = telegram?.openDB('users', {});
 
-export const UserRepo = db ? createRepo(db, defaults) : null;
+export const UserRepo = db ? new Repo<User, number>(db, defaults) : null;

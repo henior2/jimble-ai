@@ -4,8 +4,7 @@ import {
 } from '@grammyjs/conversations';
 import { Bot, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
-import config from '@/config';
-import { telegram as log } from '@/lib/log';
+import * as onMessage from './commands/+message';
 import * as preferences from './commands/preferences';
 import * as prompt from './commands/prompt';
 import * as setKey from './commands/setkey';
@@ -38,6 +37,7 @@ export function create(token: string) {
     await ctx.reply('Set your OpenRouter API key with /setmykey.');
   });
 
+  bot.use(onMessage.bot);
   bot.use(prompt.bot);
   bot.use(preferences.bot);
   bot.use(setKey.bot);
