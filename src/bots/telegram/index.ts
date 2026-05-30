@@ -2,9 +2,10 @@ import {
   type ConversationFlavor,
   conversations,
 } from '@grammyjs/conversations';
+import { run, sequentialize } from '@grammyjs/runner';
 import { Bot, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
-import * as onMessage from './commands/+message';
+import * as onMessage from './commands/onmessage';
 import * as preferences from './commands/preferences';
 import * as prompt from './commands/prompt';
 import * as setKey from './commands/setkey';
@@ -19,6 +20,7 @@ const commands: BotCommand[] = [
 
 export function create(token: string) {
   const bot = new Bot<ConversationFlavor<Context>>(token);
+  // bot.use(sequentialize((ctx) => ctx.chat?.id.toString()));
   bot.use(conversations());
 
   bot.api.setMyCommands(commands);
@@ -47,4 +49,14 @@ export function create(token: string) {
   });
 
   return bot;
+}
+
+export function runSafe(bot: Bot | Bot<ConversationFlavor<Context>>) {
+  const runner = run(bot);
+
+  // Stopping the bot when the Node.js process
+  // is about to be terminated
+  const stopRunner = () => runner.isRunning() && runner.stop();
+  process.once('SIGINT', stopRunner);
+  process.once('SIGTERM', stopRunner);
 }

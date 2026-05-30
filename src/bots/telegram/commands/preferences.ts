@@ -14,6 +14,10 @@ export const commands: BotCommand[] = [
     command: 'set',
     description: `Set preferred model ${preferredBinds.join(', ')}`,
   },
+  {
+    command: 'models',
+    description: `Get preferred models ${preferredBinds.join(', ')}`,
+  },
   { command: 'search', description: 'Toggle web search' },
 ];
 export const bot = new Composer<ConversationFlavor<Context>>();
@@ -79,6 +83,19 @@ bot.command('set', async (ctx) => {
   }
 
   await ctx.conversation.enter('setPreferred', bind);
+});
+
+bot.command('models', async (ctx) => {
+  if (!ctx.from?.id || !UserRepo) return;
+  const models = UserRepo.get(ctx.from.id).preferences.models;
+  const modelsInfo = Object.keys(models).map(
+    (bind) =>
+      `/${bind} - <code>${models[bind as PreferredBinds] ?? 'none'}</code>`,
+  );
+
+  await ctx.reply(['Your preferred model binds:', ...modelsInfo].join('\n'), {
+    parse_mode: 'HTML',
+  });
 });
 
 bot.command('getuser', (ctx) => {

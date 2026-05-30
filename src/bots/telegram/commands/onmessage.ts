@@ -8,7 +8,7 @@ bot.on('message', async (ctx, next) => {
     assistant: false,
     firstName: ctx.from.first_name,
     replyTo: ctx.msg.reply_to_message?.message_id,
-    text: ctx.msg.text,
+    text: ctx.msg.text?.replace(/^\/[^ ]+\b/, ''), // remove commands
   });
   await next();
 });

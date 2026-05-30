@@ -1,5 +1,0 @@
-apis:
-  openrouter@v1:
-    root: https://openrouter.ai/openapi.yaml
-    x-openapi-ts:
-      output: ./schemas/openrouter.ts

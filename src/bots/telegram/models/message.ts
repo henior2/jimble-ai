@@ -1,4 +1,3 @@
-import type { Message } from 'grammy/types';
 import type { Database } from 'lmdb';
 import { Repo } from '@/lib/repo';
 import { telegramMessages } from '../db';

@@ -5,7 +5,8 @@ import config from './config';
 let bots = 0;
 
 if (config.telegram.token) {
-  telegramBot.create(config.telegram.token).start();
+  const bot = telegramBot.create(config.telegram.token);
+  telegramBot.runSafe(bot);
   log.ok('Telegram bot started');
   bots++;
 }

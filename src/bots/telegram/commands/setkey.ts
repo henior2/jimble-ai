@@ -120,5 +120,6 @@ bot.command('unsetkey', async (ctx) => {
 bot.command('getkey', (ctx) => {
   let chatID = parseInt(ctx.match, 10);
   chatID = Number.isNaN(chatID) ? (ctx.from?.id ?? 0) : chatID;
-  log.debug(UserRepo?.get(chatID).key);
+  log.debug(UserRepo?.get(chatID).key, ChatRepo?.get(chatID).key);
+  log.debug(JSON.stringify(UserRepo?.get(chatID).preferences.models));
 });

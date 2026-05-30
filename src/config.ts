@@ -6,7 +6,15 @@ const config = {
   discord: {
     token: Bun.env.DISCORD_BOT_TOKEN,
   },
-  debug: !!Bun.env.DEBUG
+  ai: {
+    // baseURL: Bun.env.AI_OPENROUTER
+    baseURL: Bun.env.OPENAI_BASE_URL
+      ? Bun.env.OPENAI_BASE_URL
+      : 'https://openrouter.ai/api/v1',
+    openrouter: Bun.env.AI_OPENROUTER,
+    system: Bun.env.AI_SYSTEM,
+  },
+  debug: !!Bun.env.DEBUG,
 };
 
 export default config;

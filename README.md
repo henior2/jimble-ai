@@ -13,3 +13,7 @@ This is a Discord and Telegram bot for LLM support via OpenRouter.
   <!-- - [Drizzle](https://orm.drizzle.team/) for ORM -->
 
 This project was created using `bun init` in bun v1.3.5. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+## conventions
+
+`_template` - used to denote that a file does not contain project code but a template for other files in that scope (eg. bot command handlers)
