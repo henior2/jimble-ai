@@ -5,3 +5,8 @@ export type UserPreferences = {
   search: boolean
   models: { [key in PreferredBinds]?: string }
 }
+
+export type ConfigBind = {
+  bind: string
+  model: string
+}

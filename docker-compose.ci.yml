@@ -1,0 +1,7 @@
+services:
+  jimbleai:
+    image: jimble-ai:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: "no"

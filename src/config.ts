@@ -1,3 +1,18 @@
+import type { ConfigBind } from './types';
+
+function getBinds(): ConfigBind[] {
+  if (!Bun.env.AI_BINDS) return [];
+
+  return Bun.env.AI_BINDS.split('\n').flatMap((line) => {
+    const args = line.split('=') as [string, string];
+    if (args.length < 2) return [];
+    return {
+      bind: args[0].trim(),
+      model: args[1].trim(),
+    };
+  });
+}
+
 const config = {
   telegram: {
     token: Bun.env.TELEGRAM_BOT_TOKEN,
@@ -13,6 +28,7 @@ const config = {
       : 'https://openrouter.ai/api/v1',
     openrouter: Bun.env.AI_OPENROUTER,
     system: Bun.env.AI_SYSTEM,
+    binds: getBinds(),
   },
   debug: !!Bun.env.DEBUG,
 };

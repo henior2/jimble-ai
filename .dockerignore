@@ -33,5 +33,15 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Finder (MacOS) folder config
 .DS_Store
 
+# Local databases & persistent data
 data/
-test/
+
+# Environment secrets
+.env
+.env.local
+
+# Version control & editor configurations
+.git/
+.vscode/
+.editorconfig
+biome.json

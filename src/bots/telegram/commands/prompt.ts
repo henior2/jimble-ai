@@ -8,6 +8,7 @@ import type { BotCommand } from 'grammy/types';
 import OpenAI from 'openai';
 import { convert } from 'telegram-markdown-v2';
 import { abortResponse, getResponse } from '@/ai';
+import config from '@/config';
 import { telegram as log } from '@/lib/log';
 import { preferredBinds } from '@/types';
 import { ChatRepo } from '../models/chat';
@@ -19,11 +20,14 @@ export const commands: BotCommand[] = [
     command: bind,
     description: `Preferred model ${bind}`,
   })),
+
+  ...config.ai.binds.map(({ bind, model }) => ({
+    command: bind,
+    description: `Model ${model}`,
+  })),
 ];
 
 export const bot = new Composer();
-
-// TODO implement prompt commands
 
 function getReplyChain(chatId: number, messageId: number) {
   if (!MessageRepo) return;
@@ -80,6 +84,17 @@ async function respond(
 ) {
   if (!ctx.from?.id || !UserRepo || !ChatRepo) return;
   const key = ChatRepo.get(ctx.chatId).key || user.key;
+
+  if (!key) {
+    await ctx.reply(
+      `API key is not set. Please set it first with /setmykey or /setkey.`,
+      {
+        reply_parameters: { message_id: ctx.msgId },
+      },
+    );
+    return;
+  }
+
   const stopButton = new InlineKeyboard().text('Stop', 'stopAIRequest');
   const input = getReplyChain(ctx.chatId, ctx.msgId) ?? [
     {
@@ -96,7 +111,6 @@ async function respond(
     const reply = await ctx.reply('Processing...', {
       reply_parameters: { message_id: ctx.msgId },
       reply_markup: stopButton,
-      // parse_mode: 'MarkdownV2',
     });
 
     const stream = await getResponse(
@@ -153,7 +167,7 @@ async function respond(
           .editMessageText(
             ctx.chat.id,
             reply.message_id,
-            `${convert(messageText, 'escape')}...`,
+            convert(`${messageText}...`, 'escape'),
             {
               reply_markup: stopButton,
               parse_mode: 'MarkdownV2',
@@ -212,4 +226,15 @@ for (const bind of preferredBinds) {
     ctx.replyWithChatAction('typing');
     await respond(ctx, user, user.preferences.models[bind]);
   });
+}
+
+for (const { bind, model } of config.ai.binds) {
+  bot.command(bind, async (ctx) => {
+    if (!ctx.from?.id || !UserRepo) return;
+    const user = UserRepo.get(ctx.from.id);
+
+    ctx.replyWithChatAction('typing');
+    await respond(ctx, user, model);
+  });
+  log.ok(`Registered bind /${bind} => ${model}`);
 }
