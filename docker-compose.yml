@@ -1,6 +1,6 @@
 services:
   jimbleai:
-    image: jimble-ai:latest
+    image: codeberg.org/henior/jimble-ai:latest
     container_name: jimble-ai
     restart: unless-stopped
     environment:

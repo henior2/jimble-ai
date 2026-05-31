@@ -1,7 +1,10 @@
 services:
   jimbleai:
-    image: jimble-ai:latest
+    image: codeberg.org/henior/jimble-ai:latest
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     restart: "no"
