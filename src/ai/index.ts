@@ -5,14 +5,14 @@ const webSearchTool = config.ai.openrouter
   ? { type: 'openrouter:web_search' }
   : { type: 'web_search' };
 
-export const abortResponse = new Map<number, AbortController>();
+export const abortResponse = new Map<number | string, AbortController>();
 
 export async function getResponse(
   key: string,
   model: string,
   messages: OpenAI.ChatCompletionMessageParam[],
   search: boolean = false,
-  responseID?: number,
+  responseID?: number | string,
 ) {
   const client = new OpenAI({
     apiKey: key,

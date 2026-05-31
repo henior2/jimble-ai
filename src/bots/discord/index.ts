@@ -2,23 +2,26 @@ import {
   Client,
   Collection,
   Events,
+  GatewayIntentBits,
   InteractionContextType,
   MessageFlags,
 } from 'discord.js';
+import { abortResponse } from '@/ai';
 import { discord as log } from '@/lib/log';
 import * as preferences from './commands/preferences';
+import * as prompt from './commands/prompt';
 import * as setKey from './commands/setkey';
 import type { Command } from './types';
 
 const client = new Client({
-  intents: [
-    // GatewayIntentBits.Guilds,
-    // GatewayIntentBits.GuildMessages,
-    // GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-const commands = [...setKey.commands, ...preferences.commands];
+const commands = [
+  ...setKey.commands,
+  ...preferences.commands,
+  ...prompt.commands,
+];
 
 const commandsCollection = new Collection<string, Command>();
 for (const command of commands) {
@@ -46,27 +49,44 @@ client.once(Events.ClientReady, async (client) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-  const command = commandsCollection.get(interaction.commandName);
-  if (!command) {
-    log.error(`No command matching ${interaction.commandName} was found.`);
-    return;
-  }
+  if (interaction.isChatInputCommand()) {
+    const command = commandsCollection.get(interaction.commandName);
+    if (!command) {
+      log.error(`No command matching ${interaction.commandName} was found.`);
+      return;
+    }
 
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({
-        content: 'There was an error while executing this command!',
-        flags: MessageFlags.Ephemeral,
-      });
-    } else {
-      await interaction.reply({
-        content: 'There was an error while executing this command!',
-        flags: MessageFlags.Ephemeral,
-      });
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: 'There was an error while executing this command!',
+          flags: MessageFlags.Ephemeral,
+        });
+      } else {
+        await interaction.reply({
+          content: 'There was an error while executing this command!',
+          flags: MessageFlags.Ephemeral,
+        });
+      }
+    }
+  } else if (interaction.isButton()) {
+    if (interaction.customId === 'stopAIRequest') {
+      const controller = abortResponse.get(interaction.message.id);
+      if (controller) {
+        controller.abort('AbortedByUser');
+        abortResponse.delete(interaction.message.id);
+        await interaction.reply({
+          content: 'Request stopped.',
+        });
+      } else {
+        await interaction.reply({
+          content: 'Request already finished or could not be stopped.',
+          flags: MessageFlags.Ephemeral,
+        });
+      }
     }
   }
 });

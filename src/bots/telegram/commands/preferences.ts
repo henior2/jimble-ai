@@ -92,9 +92,14 @@ bot.command('models', async (ctx) => {
       `/${bind} - <code>${models[bind as PreferredBinds] ?? 'none'}</code>`,
   );
 
-  await ctx.reply(['Your preferred model binds:', ...modelsInfo].join('\n'), {
-    parse_mode: 'HTML',
-  });
+  await ctx.reply(
+    modelsInfo.length > 0
+      ? ['Your preferred model binds:', ...modelsInfo].join('\n')
+      : 'You have no preferred model binds set.',
+    {
+      parse_mode: 'HTML',
+    },
+  );
 });
 
 bot.command('getuser', (ctx) => {
