@@ -6,6 +6,7 @@ import {
 import { Composer, type Context } from 'grammy';
 import type { BotCommand } from 'grammy/types';
 import { telegram as log } from '@/lib/log';
+import { modelRegex } from '@/lib/regex';
 import { type PreferredBinds, preferredBinds } from '@/types';
 import { UserRepo } from '../models/user';
 
@@ -21,8 +22,6 @@ export const commands: BotCommand[] = [
   { command: 'search', description: 'Toggle web search' },
 ];
 export const bot = new Composer<ConversationFlavor<Context>>();
-
-import { modelRegex } from '../regex';
 
 bot.command('search', async (ctx) => {
   if (!ctx.from?.id || !UserRepo) return;

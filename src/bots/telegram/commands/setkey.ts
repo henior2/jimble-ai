@@ -58,7 +58,7 @@ async function setKey(
 
   conversation.external(() => ChatRepo?.set(chatID, { key }));
   await ctx.reply(
-    `API key has been set. It will now be used in chat <code>${chatID}</code>.`,
+    `API key has been set. <strong>Any user</strong> in chat <code>${chatID}</code> can now use it.`,
     { parse_mode: 'HTML' },
   );
 }

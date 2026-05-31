@@ -10,12 +10,14 @@ services:
       # set empty to disable message context and telegram-msg database
       TELEGRAM_STORE_MESSAGES: "true"
 
+      # leave empty to disable bot
+      DISCORD_BOT_TOKEN: ""
+
       # leave empty for OpenRouter
       OPENAI_BASE_URL: ""
 
       # LLM system prompt
       # Default system prompt - taken from https://github.com/jelni/craiyon-bot/blob/0cac16f2e2bd84770ccf66f0ed8d48e12e08235f/src/commands/gemini.rs#L22
-      
       AI_SYSTEM: |-
         Be concise and precise. Don't be verbose.
         Answer in English, unless the user wrote in another language.

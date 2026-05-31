@@ -46,7 +46,6 @@ function getReplyChain(chatId: number, messageId: number) {
       .replace(/[^a-zA-Z0-9_-]/g, '')
       .slice(0, 64);
 
-    // Fallback to empty string if text is undefined, as OpenAI expects 'content'
     const content = msg.text ?? '';
 
     if (msg.assistant) {
@@ -177,16 +176,7 @@ async function respond(
       }
     }
 
-    log.debug(
-      'took',
-      Date.now() - start,
-      'ms',
-      // completion.usage?.prompt_tokens,
-      // '+',
-      // completion.usage?.completion_tokens_details?.reasoning_tokens,
-      // completion.usage?.completion_tokens,
-      // 'tokens',
-    );
+    log.debug('took', Date.now() - start, 'ms');
 
     await MessageRepo?.set([ctx.chatId, reply.message_id], {
       assistant: true,
